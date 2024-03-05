@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Data scraping on an amazon Product Using BeautifulSoup (Python)</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="inner">
+
+							<!-- Logo -->
+								<a href="index.html" class="logo">
+									<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">Main Page</span>
+								</a>
+
+							<!-- Nav -->
+								<nav>
+									<ul>
+										<li><a href="#menu">Menu</a></li>
+									</ul>
+								</nav>
+
+						</div>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<h2>Menu</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="ProjectList.html">Projects List</a></li>
+							<li><a href="InProgress.html">In progress</a></li>
+						<!--	<li><a href="elements.html">Elments</a></li>-->
+							<li><a href="Contacts.html">Contact Me</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+							<h1>Data Scraping On Amazon</h1>
+							<span class="image main"><img src="images/pic13.jpg" alt="" /></span>
+							<h3>Code :</h3>
+							<pre><code>
+import csv
+import os
+import requests
+import datetime
+import re
+from bs4 import BeautifulSoup
+
+def Check_price():
+    # Define URL and headers
+    URL = 'https://www.amazon.ae/Trust-engineer-save-time-Mug/dp/B07N6P1XC9/ref=sr_1_1?crid=35TL7DOU0NKX9&dib=eyJ2IjoiMSJ9.jNOkticQrzVZaT1LRLvEiq4ySgEfKW7aZ5uNE2v0LIOu_QH2T6QcgSm14yzc67pODZfTaHq5meUvzzy-IBgF1MF-6bxNufpGdar10NWIndYDM0-6L6FbtT-qIYK69qe3bWuVLCmRlwXQwOWl6WaLzJlc-g2IX9HlSv-xsoarcLjYuM2BIY9_sHp9goTGZQUXLXjigWtnAs8mcrR8N7itB_F1m_mJomMr-20si0U8grgd0twmkr4GOiJEL-cqXhW1lJl5Z2bBpUKKexZHl1O9SKg_aKzDaL4jxy15RRm2bCs.8INO3lJwzDaE4FjeSmvHNu-PNJtcaD7AqPD3sMdVKA8&dib_tag=se&keywords=mug+amazon+data&qid=1709186718&sprefix=mug+amazon+data%2Caps%2C343&sr=8-1'
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "DNT": "1",
+        "Connection": "close",
+        "Upgrade-Insecure-Requests": "1"
+    }
+
+    try:
+        # Send GET request to the URL
+        response = requests.get(URL, headers=headers)
+        response.raise_for_status()  # Raise an exception for any HTTP errors
+
+        # Extract HTML content
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Extract title
+        title = soup.find(id='productTitle').get_text().strip()
+
+        # Extract price (numerical value only)
+        price_text = soup.find(class_='aok-offscreen').get_text().strip()
+        price = re.search(r'\d+\.\d+', price_text).group()  # Extract numerical value using regular expression
+
+        # Data cleaning
+        title = title.strip()  # Remove leading and trailing whitespace
+
+        # Get current date
+        collecting_date = datetime.date.today()
+
+        # Define data to be written to CSV
+        data = [title, price, collecting_date]
+
+        # Define file path for saving the CSV file on desktop
+        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+        file_path = os.path.join(desktop_path, 'AmazonMug.csv')
+
+        # Write data to the CSV file
+        with open(file_path, 'a+', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            if f.tell() == 0:  # Check if file is empty (no data written yet)
+                writer.writerow(['title', 'price', 'collecting_date'])  # Write headers if file is empty
+            writer.writerow(data)
+
+        print("CSV file saved on the desktop.")
+
+    except requests.exceptions.RequestException as e:
+        print("Failed to connect to the URL:", e)
+
+    except AttributeError as e:
+        print("Failed to extract data from the HTML:", e)
+
+# Call the function
+Check_price()</code></pre>
+</section>
+<div>
+	<h3>Explanation :</h3>
+	<p>
+	    This Python function Check_price is designed to retrieve the title and price of a product from Amazon.ae, then save this information along with the current date to a CSV file on the user's desktop. Here's a breakdown of what the code does:
+	</p>
+	<ul>
+	    <li>It imports necessary libraries for web scraping (requests and BeautifulSoup), working with dates (datetime), regular expressions (re), and file manipulation (csv, os).</li>
+	    <li>The function Check_price defines the URL of the Amazon product page and sets up headers to mimic a browser's request.</li>
+	    <li>It sends a GET request to the URL, retrieves the HTML content of the page, and creates a BeautifulSoup object to parse the HTML.</li>
+	    <li>The function extracts the product title and price from the parsed HTML. It uses specific HTML element IDs and classes to locate the desired information.</li>
+	    <li>Regular expressions are employed to extract the numerical value from the price text. This ensures that only the numerical value of the price is obtained.</li>
+	    <li>Data cleaning steps are applied to remove any leading or trailing whitespace from the title.</li>
+	    <li>The current date is obtained using datetime.date.today() to represent when the data was collected.</li>
+	    <li>Data is formatted into a list containing the title, price, and collecting date.</li>
+	    <li>The function defines the file path for saving the CSV file on the user's desktop.</li>
+	    <li>It checks if the CSV file is empty. If it is, the function writes the header row. Otherwise, it appends the new data to the existing file.</li>
+	    <li>The function prints a message indicating that the CSV file has been saved on the desktop.</li>
+	    <li>Error handling is implemented using try and except blocks to catch potential exceptions during the HTTP request, data extraction, or file writing process.</li>
+	    <li>Finally, the function is called to execute the scraping and data saving process.</li>
+	</ul>
+	<p>
+	    You can use this function to periodically check the price of the Amazon product and keep track of any changes over time.
+	</p>
+  </div>
+  
+							<!-- Footer -->
+							<footer id="footer">
+								<div class="inner">
+								<!-- 	<section>
+										<h2>Get in touch</h2>
+										<form method="post" action="#">
+											<div class="fields">
+												<div class="field half">
+													<input type="text" name="name" id="name" placeholder="Name" />
+												</div>
+												<div class="field half">
+													<input type="email" name="email" id="email" placeholder="Email" />
+												</div>
+												<div class="field">
+													<textarea name="message" id="message" placeholder="Message"></textarea>
+												</div>
+											</div>
+											<ul class="actions">
+												<li><input type="submit" value="Send" class="primary" /></li>
+											</ul>
+										</form>
+									</section>-->
+									<section>
+										<h2>Contacts :</h2>
+										<ul class="icons">
+											<li><a href="https://github.com/safelmeky" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+											<li><a href="https://linkedin.com/in/salahaldeen-el-meky-34b476199" class="icon brands style2 fa-linkedin"><span class="label">Linkedin</span></a></li>
+											<li><a href="Contacts.html" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
+											<li><a href="Contacts.html" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
+										</ul>
+									</section>
+									<ul class="copyright">
+										<li>&copy; Salahaldeen Elmeky. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li><li> T:+971-507164067</li></li><li> Email:salahelmeky@gmail.com</li>
+									</ul>
+								</div>
+							</footer>
+
+					</div>
+
+				<!-- Scripts -->
+					<script src="assets/js/jquery.min.js"></script>
+					<script src="assets/js/browser.min.js"></script>
+					<script src="assets/js/breakpoints.min.js"></script>
+					<script src="assets/js/util.js"></script>
+					<script src="assets/js/main.js"></script>
+
+			</body>
+			</html>
