@@ -2,7 +2,7 @@
 
 <html>
 	<head>
-		<title>Data scraping on an amazon Product Using BeautifulSoup (Python)</title>
+		<title>Analysis on the state of Data Professions (Power BI)</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -40,7 +40,6 @@
 							<li><a href="InProgress.html">In progress</a></li>
 						<!--	<li><a href="elements.html">Elments</a></li>-->
 							<li><a href="Contacts.html">Contact Me</a></li>
-                                          <li><a href="Resume.html">Resume</a></li>
 						</ul>
 					</nav>
 
@@ -51,70 +50,7 @@
 							<span class="image main"><img src="images/pic13.jpg" alt="" /></span>
 							<h3>Code :</h3>
 							<pre><code>
-import csv
-import os
-import requests
-import datetime
-import re
-from bs4 import BeautifulSoup
-
-def Check_price():
-    # Define URL and headers
-    URL = 'https://www.amazon.ae/Trust-engineer-save-time-Mug/dp/B07N6P1XC9/ref=sr_1_1?crid=35TL7DOU0NKX9&dib=eyJ2IjoiMSJ9.jNOkticQrzVZaT1LRLvEiq4ySgEfKW7aZ5uNE2v0LIOu_QH2T6QcgSm14yzc67pODZfTaHq5meUvzzy-IBgF1MF-6bxNufpGdar10NWIndYDM0-6L6FbtT-qIYK69qe3bWuVLCmRlwXQwOWl6WaLzJlc-g2IX9HlSv-xsoarcLjYuM2BIY9_sHp9goTGZQUXLXjigWtnAs8mcrR8N7itB_F1m_mJomMr-20si0U8grgd0twmkr4GOiJEL-cqXhW1lJl5Z2bBpUKKexZHl1O9SKg_aKzDaL4jxy15RRm2bCs.8INO3lJwzDaE4FjeSmvHNu-PNJtcaD7AqPD3sMdVKA8&dib_tag=se&keywords=mug+amazon+data&qid=1709186718&sprefix=mug+amazon+data%2Caps%2C343&sr=8-1'
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-        "Accept-Encoding": "gzip, deflate",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "DNT": "1",
-        "Connection": "close",
-        "Upgrade-Insecure-Requests": "1"
-    }
-
-    try:
-        # Send GET request to the URL
-        response = requests.get(URL, headers=headers)
-        response.raise_for_status()  # Raise an exception for any HTTP errors
-
-        # Extract HTML content
-        soup = BeautifulSoup(response.content, "html.parser")
-
-        # Extract title
-        title = soup.find(id='productTitle').get_text().strip()
-
-        # Extract price (numerical value only)
-        price_text = soup.find(class_='aok-offscreen').get_text().strip()
-        price = re.search(r'\d+\.\d+', price_text).group()  # Extract numerical value using regular expression
-
-        # Data cleaning
-        title = title.strip()  # Remove leading and trailing whitespace
-
-        # Get current date
-        collecting_date = datetime.date.today()
-
-        # Define data to be written to CSV
-        data = [title, price, collecting_date]
-
-        # Define file path for saving the CSV file on desktop
-        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
-        file_path = os.path.join(desktop_path, 'AmazonMug.csv')
-
-        # Write data to the CSV file
-        with open(file_path, 'a+', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            if f.tell() == 0:  # Check if file is empty (no data written yet)
-                writer.writerow(['title', 'price', 'collecting_date'])  # Write headers if file is empty
-            writer.writerow(data)
-
-        print("CSV file saved on the desktop.")
-
-    except requests.exceptions.RequestException as e:
-        print("Failed to connect to the URL:", e)
-
-    except AttributeError as e:
-        print("Failed to extract data from the HTML:", e)
-
-# Call the function
-Check_price()</code></pre>
+</code></pre>
 </section>
 <div>
 	<h3>Explanation :</h3>
